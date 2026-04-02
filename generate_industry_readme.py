@@ -66,10 +66,20 @@ img_shap = embed_image(plots / "05_shap_importance.png")
 img_waterfall = embed_image(plots / "05_shap_waterfall.png")
 img_overview = embed_image(plots / "01_dataset_overview.png")
 
-def img_tag(b64, alt, width="100%"):
-    if b64:
-        return f'<img src="{b64}" alt="{alt}" width="{width}"/>'
-    return f"[{alt}]"
+def img_tag(b64, alt, width="100%", collapsible=False):
+    if not b64:
+        return f"*[{alt} not available]*"
+    
+    img_html = f'<img src="{b64}" alt="{alt}" width="{width}"/>'
+    
+    if collapsible:
+        return f"""<details>
+<summary>📊 {alt} (click to expand)</summary>
+
+{img_html}
+
+</details>"""
+    return img_html
 
 readme = f"""# VeriTriage: Accelerating VLSI Sign-Off Verification with Machine Learning
 
@@ -205,7 +215,7 @@ Result: Save 33-100% of verification time
 
 ### Detailed Performance Analysis
 
-{img_tag(img_confusion, "Confusion matrices showing prediction accuracy", "100%")}
+{img_tag(img_confusion, "Confusion matrices showing prediction accuracy", "100%", collapsible=True)}
 
 **Key metrics from confusion matrices:**
 - **True Negative Rate (specificity):** >81% — High confidence in PASS predictions
@@ -275,7 +285,7 @@ Per year (20 projects): 4,800 hours + $3.6M compute
 
 Predictions without explanations are useless to design engineers. VeriTriage explains *why* a check fails:
 
-{img_tag(img_shap, "SHAP feature importance: what drives sign-off outcomes", "100%")}
+{img_tag(img_shap, "SHAP feature importance: what drives sign-off outcomes", "100%", collapsible=True)}
 
 **Top predictive features (cross all domains):**
 
@@ -287,7 +297,7 @@ Predictions without explanations are useless to design engineers. VeriTriage exp
 
 ### Example: Per-Prediction Explanation
 
-{img_tag(img_waterfall, "SHAP waterfall: example prediction with full explanation", "100%")}
+{img_tag(img_waterfall, "SHAP waterfall: example prediction with full explanation", "100%", collapsible=True)}
 
 **Reading the waterfall:**
 1. **Base value** (~0.5): Average prediction across training set

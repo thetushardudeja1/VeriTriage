@@ -67,9 +67,9 @@ models/*.pth
 models/*.joblib
 *.model
 
-# Large plot files
-results/plots/*.png
-results/plots/*.jpg
+# Large plot files (allow PNG/JPG for README)
+# results/plots/*.png
+# results/plots/*.jpg
 results/plots/*.pdf
 !results/plots/.gitkeep
 

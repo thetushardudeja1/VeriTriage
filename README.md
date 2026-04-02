@@ -95,7 +95,7 @@ Result: Save 4-8 hours per iteration
 
 ### Performance Across Three Sign-Off Domains
 
-![Model performance: IR Drop, DRC, Congestion predictions](results/plots/03_model_results.png)
+![Model performance: IR Drop, DRC, Congestion predictions](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/03_model_results.png)
 
 #### Detailed Metrics
 
@@ -109,13 +109,13 @@ Result: Save 4-8 hours per iteration
 
 #### Confusion Matrices
 
-![Confusion matrices showing prediction accuracy](results/plots/03_confusion_matrices.png)
+![Confusion matrices showing prediction accuracy](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/03_confusion_matrices.png)
 
 **Key insight:** The model has learned to be **conservative**. It predicts FAIL only when confident, minimizing false negatives (missed real failures).
 
 ### Per-Architecture Analysis
 
-![Cross-family failure rates and generalization gap](results/plots/04_chip_family_failure_rates.png)
+![Cross-family failure rates and generalization gap](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/04_chip_family_failure_rates.png)
 
 **Finding:** RISC-V architectures fail twice as often as Zero-RISC on IR Drop checks, but the **cross-family generalization gap** remains small (<5% accuracy delta).
 
@@ -141,7 +141,7 @@ Result: Save 4-8 hours per iteration
 
 ## Cross-Architecture Generalization
 
-![Generalization gap analysis: transfer learning success](results/plots/04_generalization_gap.png)
+![Generalization gap analysis: transfer learning success](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/04_generalization_gap.png)
 
 **Experiment:** Train on RISC-V (7,078 designs) → Test on Zero-RISC (3,164 designs)
 
@@ -158,7 +158,7 @@ Result: Save 4-8 hours per iteration
 
 ### Feature Importance Across Domains
 
-![Feature importance ranked by SHAP values](results/plots/05_shap_importance.png)
+![Feature importance ranked by SHAP values](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/05_shap_importance.png)
 
 | Domain | Top Feature | Why It Matters | Engineer Action |
 |:---|:---|:---|:---|
@@ -168,7 +168,7 @@ Result: Save 4-8 hours per iteration
 
 ### Example: Per-Prediction Explanation
 
-![SHAP waterfall: example prediction with full explanation](results/plots/05_shap_waterfall.png)
+![SHAP waterfall: example prediction with full explanation](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/05_shap_waterfall.png)
 
 **Example design:** Design ID 10247 (Zero-RISC)
 - **Prediction:** DRC will PASS (91.5% confidence)
@@ -181,7 +181,7 @@ Result: Save 4-8 hours per iteration
 
 ## Dataset Composition
 
-![Dataset overview: architecture distribution and failure rates](results/plots/01_dataset_overview.png)
+![Dataset overview: architecture distribution and failure rates](https://raw.githubusercontent.com/thetushardudeja1/VeriTriage/main/results/plots/01_dataset_overview.png)
 
 **Key statistics:**
 - 10,242 total designs (→ 7,078 RISC-V + 3,164 Zero-RISC)

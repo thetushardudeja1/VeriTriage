@@ -5,6 +5,7 @@ Styled as professional ML engineering work at top tech companies
 
 import pandas as pd
 import base64
+import json
 from pathlib import Path
 from datetime import datetime
 
@@ -17,6 +18,17 @@ def embed_image(path):
         return f"data:image/png;base64,{data}"
     except:
         return None
+
+def load_notebook_images():
+    """Load images extracted directly from Jupyter notebooks."""
+    try:
+        img_file = ROOT / "notebook_images.json"
+        if img_file.exists():
+            with open(img_file, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return {}
 
 # Load data
 results_path = ROOT / "data/processed/model_results.csv"
@@ -56,15 +68,29 @@ cg_acc = df_results.loc['Congestion', 'Accuracy'] * 100
 cg_f1 = df_results.loc['Congestion', 'F1']
 cg_auc = df_results.loc['Congestion', 'ROC-AUC']
 
-# Load plots
-plots = ROOT / "results/plots"
-img_results = embed_image(plots / "03_model_results.png")
-img_confusion = embed_image(plots / "03_confusion_matrices.png")
-img_failure = embed_image(plots / "04_chip_family_failure_rates.png")
-img_gap = embed_image(plots / "04_generalization_gap.png")
-img_shap = embed_image(plots / "05_shap_importance.png")
-img_waterfall = embed_image(plots / "05_shap_waterfall.png")
-img_overview = embed_image(plots / "01_dataset_overview.png")
+# Load images from notebooks first, then fallback to PNG files
+notebook_imgs = load_notebook_images()
+
+# Use notebook images if available, otherwise load from PNG files
+if notebook_imgs:
+    # Notebook images: 05_shap_analysis_img1, 05_shap_analysis_img2, 03_model_training_img1, etc.
+    img_shap = notebook_imgs.get('05_shap_analysis_img1')
+    img_waterfall = notebook_imgs.get('05_shap_analysis_img2')
+    img_results = notebook_imgs.get('03_model_training_img1')
+    img_confusion = notebook_imgs.get('03_model_training_img2')
+    img_failure = notebook_imgs.get('04_chip_family_analysis_img1')
+    img_gap = notebook_imgs.get('04_chip_family_analysis_img2')
+    img_overview = None  # Not in notebooks
+else:
+    # Fallback: load from PNG files
+    plots = ROOT / "results/plots"
+    img_results = embed_image(plots / "03_model_results.png")
+    img_confusion = embed_image(plots / "03_confusion_matrices.png")
+    img_failure = embed_image(plots / "04_chip_family_failure_rates.png")
+    img_gap = embed_image(plots / "04_generalization_gap.png")
+    img_shap = embed_image(plots / "05_shap_importance.png")
+    img_waterfall = embed_image(plots / "05_shap_waterfall.png")
+    img_overview = embed_image(plots / "01_dataset_overview.png")
 
 def img_tag(b64, alt, width="100%", collapsible=False):
     if not b64:

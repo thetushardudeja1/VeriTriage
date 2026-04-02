@@ -1,34 +1,18 @@
 """
 VeriTriage: Industry-Focused Engineering Report Generator
 Styled as professional ML engineering work at top tech companies
+Uses relative file paths for GitHub-compatible image rendering
 """
 
 import pandas as pd
-import base64
-import json
 from pathlib import Path
 from datetime import datetime
 
 ROOT = Path(r"C:\Users\TUSHAR\2026-27\PROJECTS\VeriTriage")
 
-def embed_image(path):
-    try:
-        with open(path, "rb") as f:
-            data = base64.b64encode(f.read()).decode("utf-8")
-        return f"data:image/png;base64,{data}"
-    except:
-        return None
-
-def load_notebook_images():
-    """Load images extracted directly from Jupyter notebooks."""
-    try:
-        img_file = ROOT / "notebook_images.json"
-        if img_file.exists():
-            with open(img_file, 'r') as f:
-                return json.load(f)
-    except:
-        pass
-    return {}
+def img_path(filename):
+    """Return relative path to image file (GitHub-compatible)."""
+    return f"results/plots/{filename}"
 
 # Load data
 results_path = ROOT / "data/processed/model_results.csv"
@@ -68,44 +52,30 @@ cg_acc = df_results.loc['Congestion', 'Accuracy'] * 100
 cg_f1 = df_results.loc['Congestion', 'F1']
 cg_auc = df_results.loc['Congestion', 'ROC-AUC']
 
-# Load images from notebooks first, then fallback to PNG files
-notebook_imgs = load_notebook_images()
+# Use relative paths to PNG files (GitHub-compatible)
+img_shap = img_path("shap_feature_importance.png")
+img_waterfall = img_path("shap_waterfall_example.png")
+img_results = img_path("model_performance_confusion.png")
+img_confusion = img_path("model_training_curves.png")
+img_failure = img_path("chip_family_failure_rates.png")
+img_gap = img_path("cross_architecture_generalization.png")
+img_overview = None  # Not available in notebook images
 
-# Use notebook images if available, otherwise load from PNG files
-if notebook_imgs:
-    # Notebook images: 05_shap_analysis_img1, 05_shap_analysis_img2, 03_model_training_img1, etc.
-    img_shap = notebook_imgs.get('05_shap_analysis_img1')
-    img_waterfall = notebook_imgs.get('05_shap_analysis_img2')
-    img_results = notebook_imgs.get('03_model_training_img1')
-    img_confusion = notebook_imgs.get('03_model_training_img2')
-    img_failure = notebook_imgs.get('04_chip_family_analysis_img1')
-    img_gap = notebook_imgs.get('04_chip_family_analysis_img2')
-    img_overview = None  # Not in notebooks
-else:
-    # Fallback: load from PNG files
-    plots = ROOT / "results/plots"
-    img_results = embed_image(plots / "03_model_results.png")
-    img_confusion = embed_image(plots / "03_confusion_matrices.png")
-    img_failure = embed_image(plots / "04_chip_family_failure_rates.png")
-    img_gap = embed_image(plots / "04_generalization_gap.png")
-    img_shap = embed_image(plots / "05_shap_importance.png")
-    img_waterfall = embed_image(plots / "05_shap_waterfall.png")
-    img_overview = embed_image(plots / "01_dataset_overview.png")
-
-def img_tag(b64, alt, width="100%", collapsible=False):
-    if not b64:
+def img_tag(img_path_str, alt, collapsible=False):
+    """Generate markdown image tag (GitHub-compatible with file paths)."""
+    if not img_path_str:
         return f"*[{alt} not available]*"
     
-    img_html = f'<img src="{b64}" alt="{alt}" width="{width}"/>'
+    img_md = f"![{alt}]({img_path_str})"
     
     if collapsible:
         return f"""<details>
 <summary>📊 {alt} (click to expand)</summary>
 
-{img_html}
+{img_md}
 
 </details>"""
-    return img_html
+    return img_md
 
 readme = f"""# VeriTriage: Accelerating VLSI Sign-Off Verification with Machine Learning
 
@@ -241,7 +211,7 @@ Result: Save 33-100% of verification time
 
 ### Detailed Performance Analysis
 
-{img_tag(img_confusion, "Confusion matrices showing prediction accuracy", "100%", collapsible=True)}
+{img_tag(img_confusion, "Confusion matrices showing prediction accuracy", collapsible=True)}
 
 **Key metrics from confusion matrices:**
 - **True Negative Rate (specificity):** >81% — High confidence in PASS predictions
@@ -277,7 +247,7 @@ Per year (20 projects): 4,800 hours + $3.6M compute
 
 ### Architecture-Specific Verification Outcomes
 
-{img_tag(img_failure, "Failure rate differences between RISCY and zero-riscy architectures", "100%")}
+{img_tag(img_failure, "Failure rate differences between RISCY and zero-riscy architectures")}
 
 **Critical finding:** Chip architecture **fundamentally changes** verification outcomes.
 
@@ -291,7 +261,7 @@ Per year (20 projects): 4,800 hours + $3.6M compute
 
 ### Cross-Architecture Generalization Challenge
 
-{img_tag(img_gap, "Transfer learning failure and mixed-model recovery", "100%")}
+{img_tag(img_gap, "Transfer learning failure and mixed-model recovery")}
 
 **Transfer learning analysis (the hard truth):**
 
@@ -311,7 +281,7 @@ Per year (20 projects): 4,800 hours + $3.6M compute
 
 Predictions without explanations are useless to design engineers. VeriTriage explains *why* a check fails:
 
-{img_tag(img_shap, "SHAP feature importance: what drives sign-off outcomes", "100%", collapsible=True)}
+{img_tag(img_shap, "SHAP feature importance: what drives sign-off outcomes", collapsible=True)}
 
 **Top predictive features (cross all domains):**
 
@@ -323,7 +293,7 @@ Predictions without explanations are useless to design engineers. VeriTriage exp
 
 ### Example: Per-Prediction Explanation
 
-{img_tag(img_waterfall, "SHAP waterfall: example prediction with full explanation", "100%", collapsible=True)}
+{img_tag(img_waterfall, "SHAP waterfall: example prediction with full explanation", collapsible=True)}
 
 **Reading the waterfall:**
 1. **Base value** (~0.5): Average prediction across training set
@@ -342,7 +312,7 @@ This is actionable. This is why VeriTriage works in production.
 
 ### CircuitNet-N28: Production-Scale Dataset
 
-{img_tag(img_overview, "Dataset composition and feature distributions", "100%")}
+{img_tag(img_overview, "Dataset composition and feature distributions")}
 
 **Dataset composition:**
 - **Total designs:** {total_samples:,} real production designs
